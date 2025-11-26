@@ -1,0 +1,28 @@
+name: lite_store
+description: "A new Flutter package project."
+version: 0.0.1
+homepage: "https://example.com"
+
+environment:
+  sdk: ^3.10.0
+  flutter: ">=3.35.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Database Sqlite
+  sqlite3: ^3.1.0
+  path_provider: 2.1.5
+  path: ^1.9.1
+
+  # Shared Preferences
+  shared_preferences: ^2.5.3
+
+  # Secure Storage
+  flutter_secure_storage: ^10.0.0-beta.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
