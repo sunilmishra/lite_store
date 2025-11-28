@@ -14,8 +14,9 @@ class UserDao extends Dao<UserEntity> {
   Future<List<UserEntity>> getAll() async {
     final db = await databaseCreator.getDatabase();
     final rows = db.select('SELECT * FROM users');
-    return rows
-        .map((r) => UserEntity(id: r['id'] as int, name: r['name'] as String))
-        .toList();
+
+    return rows.map((row) {
+      return UserEntity.fromRow(row);
+    }).toList();
   }
 }
