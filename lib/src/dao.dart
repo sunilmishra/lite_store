@@ -37,6 +37,23 @@ abstract class Dao<T extends Entity> {
     return 1;
   }
 
+  Future<int> saveAll(List<T> entities) async {
+    final db = await databaseCreator.getDatabase();
+    final batch = db.prepare(
+      'INSERT INTO $tableName (${entities.first.toMap().keys.join(', ')}) '
+      'VALUES (${List.filled(entities.first.toMap().length, '?').join(', ')})',
+    );
+
+    db.execute('BEGIN TRANSACTION;');
+    for (var entity in entities) {
+      batch.execute(entity.toMap().values.toList());
+    }
+    db.execute('COMMIT;');
+    batch.close();
+    _notifyChange();
+    return entities.length;
+  }
+
   /// Update entity
   Future<int> update(T entity) async {
     final db = await databaseCreator.getDatabase();

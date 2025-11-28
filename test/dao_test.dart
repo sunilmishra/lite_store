@@ -88,6 +88,19 @@ void main() {
       expect(items.first.value, 'hello');
     });
 
+    test('saveAll() should insert multiple entities', () async {
+      final entities = <MockEntity>[];
+      for (var i = 0; i < 10000; i++) {
+        entities.add(MockEntity(value: 'value $i'));
+      }
+
+      await dao.saveAll(entities);
+
+      final items = await dao.getAll();
+      expect(items.length, 10000);
+      expect(items.last.value, 'value 9999');
+    });
+
     test('update() should modify existing entity', () async {
       await dao.save(MockEntity(value: 'before'));
       final original = (await dao.getAll()).first;
