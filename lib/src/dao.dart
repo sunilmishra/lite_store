@@ -40,7 +40,7 @@ abstract class Dao<T extends Entity> {
   Future<int> saveAll(List<T> entities) async {
     final db = await databaseCreator.getDatabase();
     final batch = db.prepare(
-      'INSERT INTO $tableName (${entities.first.toMap().keys.join(', ')}) '
+      'INSERT OR REPLACE INTO $tableName (${entities.first.toMap().keys.join(', ')}) '
       'VALUES (${List.filled(entities.first.toMap().length, '?').join(', ')})',
     );
 
@@ -75,6 +75,15 @@ abstract class Dao<T extends Entity> {
     stmt.close();
     _notifyChange();
     return 1;
+  }
+
+  /// Delete all entities
+  Future<void> removeAll() async {
+    final db = await databaseCreator.getDatabase();
+    final stmt = db.prepare('DELETE FROM $tableName');
+    stmt.execute();
+    stmt.close();
+    _notifyChange();
   }
 
   /// Get all entities
