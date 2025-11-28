@@ -9,10 +9,15 @@ typedef MigrationCallback =
 
 /// Table schema definition
 class TableSchema {
+  TableSchema({required this.tableName, required this.createSql});
+
   final String tableName;
   final String createSql;
 
-  TableSchema({required this.tableName, required this.createSql});
+  @override
+  String toString() {
+    return 'TableSchema(tableName: $tableName, createSql: $createSql)';
+  }
 }
 
 /// LiteStoreDB is the main database manager for LiteStore.
@@ -37,16 +42,20 @@ class LiteStoreDB {
   /// [tables]: List of table schemas to create
   /// [migrationCallback]: Callback to handle migrations
   Future<void> init({
+    required List<TableSchema> tables,
     String dbName = 'app.db',
     int version = 1,
-    List<TableSchema>? tables,
     MigrationCallback? migrationCallback,
     bool inMemory = false,
   }) async {
     if (_isInitialized) return;
 
+    _tables
+      ..clear()
+      ..addAll(tables);
+
     _dbVersion = version;
-    if (tables != null) _tables.addAll(tables);
+
     _migrationCallback = migrationCallback;
 
     if (inMemory) {
@@ -73,11 +82,6 @@ class LiteStoreDB {
   void close() {
     _db.close();
     _isInitialized = false;
-  }
-
-  /// Register a table schema (optional if passed during init)
-  void registerTable(TableSchema table) {
-    _tables.add(table);
   }
 
   /// Internal: Handles table creation & migrations using PRAGMA user_version
